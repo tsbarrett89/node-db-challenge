@@ -43,9 +43,8 @@ router.get('/projects', (req, res) => {
         });
 })
 // adding tasks.
-router.post('/:pid/tasks', (req, res) => {
-    const pid = req.params.pid
-    projects.addTask(pid)
+router.post('/tasks', (req, res) => {
+    projects.addTask(req.body)
         .then(task => {
             res.status(201).json(task);
         })
@@ -54,3 +53,13 @@ router.post('/:pid/tasks', (req, res) => {
         });
 })
 // retrieving a list of tasks. The list of tasks should include the project name and project description.
+router.get('/:pid/tasks', (req, res) => {
+    const pid = req.params.pid
+    projects.findTasks(pid)
+        .then(tasks => {
+            res.status(201).json(tasks);
+        })
+        .catch(err => {
+            res.status(500).json({ message: 'Failed to get tasks' });
+        });
+})
