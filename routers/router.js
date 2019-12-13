@@ -23,7 +23,7 @@ router.get('/resources', (req, res) => {
         });
 })
 // adding projects.
-router.post('/projects', (req, res) => {
+router.post('/', (req, res) => {
     projects.addProject(req.body)
         .then(project => {
             res.status(201).json(project);
@@ -33,10 +33,16 @@ router.post('/projects', (req, res) => {
         });
 })
 // retrieving a list of projects.
-router.get('/projects', (req, res) => {
+router.get('/', (req, res) => {
     projects.findProjects()
         .then(projects => {
-            res.status(200).json(projects);
+            res.status(200).json(projects.map(project => {
+                if (project.completed) {
+                  return {...project, completed: true}
+                } else {
+                  return {...project, completed: false}
+                }
+              }));
         })
         .catch(err => {
             res.status(500).json({ message: 'Failed to get projects' });
@@ -57,9 +63,21 @@ router.get('/:pid/tasks', (req, res) => {
     const pid = req.params.pid
     projects.findTasks(pid)
         .then(tasks => {
-            res.status(201).json(tasks);
+            res.status(200).json(tasks.map(task => {
+                if (task.completed) {
+                  return {...task, completed: true}
+                } else if (!task.completed){
+                  return {...task, complete: false}
+                } else if (task.complete) {
+                    return {...task, complete: true}
+                } else {
+                    return {...task, complete: false}
+                }
+              }))
         })
         .catch(err => {
             res.status(500).json({ message: 'Failed to get tasks' });
         });
 })
+
+module.exports = router;

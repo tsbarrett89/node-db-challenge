@@ -1,4 +1,4 @@
-const db = require('./data/dbsprint.db3')
+const db = require('../data/dbConfig.js')
 
 module.exports = {
     addResource,
@@ -31,5 +31,7 @@ function addTask(task) {
 }
 // retreiving a list of tasks. should include the project name and description
 function findTasks(project_id) {
-    return db('tasks').where({ project_id: project_id})
+    return db('tasks')
+        .innerJoin('projects', 'projects.id', 'tasks.project_id')
+        .where({ project_id: project_id})
 }
